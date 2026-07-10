@@ -1,0 +1,189 @@
+# 3-Day Learning Plan: Go + Distributed Systems + K8s Operator
+
+## Overview
+
+Each day builds on the last. The operator only appears at the very end of day 3.
+
+**Your mental model bridge (ops → dev):**
+
+| You know | Equivalent here |
+|---|---|
+| Terraform resource | Go struct with typed fields |
+| Terraform plan/apply | Operator reconcile loop |
+| Helm values.yaml | Custom Resource spec |
+| CRD schema | Go types → `make generate` |
+| k8s deployment manifest | What your operator creates programmatically |
+
+---
+
+## Theory Reference
+
+Read each topic before the day it's marked as required. Each entry is intentionally short — the goal is the mental model, not exhaustive detail.
+
+| # | Topic | One-line explanation | Required before | Done |
+|---|---|---|---|---|
+| T1 | HTTP fundamentals | Methods, status codes, headers, idempotency (GET/PUT safe to retry, POST is not) | Day 1 | [x] |
+| T2 | REST design principles | Resources are nouns, verbs are HTTP methods, state lives on the server not the client | Day 1 | [ ] |
+| T3 | API error design | Errors need a consistent shape — RFC 7807 "Problem Details" is the standard (`type`, `title`, `status`, `detail`) | Day 1 | [ ] |
+| T4 | Dependency Injection | Pass dependencies in from outside rather than constructing them inside — enables swapping implementations without changing callers | Day 1 | [ ] |
+| T5 | Repository pattern | Abstract all data access behind an interface (`type ItemRepository interface { Get, Save, Delete }`) — business logic never touches storage directly | Day 1 | [ ] |
+| T6 | Service layer pattern | HTTP handler → Service (business logic) → Repository (storage) — each layer knows nothing about the layers below it | Day 1 | [ ] |
+| T7 | Middleware pattern | A function that wraps a handler to add cross-cutting behaviour (logging, auth, rate limiting) without touching the handler itself | Day 1 optional | [ ] |
+| T8 | Caching strategies | Cache-aside (read): check cache first, on miss load from DB and write to cache. Write-through: write to DB and cache together. Write-behind: write to cache, flush to DB async | Day 2 | [ ] |
+| T9 | TTL, LRU eviction, cache stampede | TTL: entry expires after fixed time. LRU: evict least-recently-used when full. Stampede: all requests miss simultaneously → all hit DB → overload | Day 2 | [ ] |
+| T10 | Messaging delivery guarantees | At-most-once: fire and forget, may lose. At-least-once: retried until acked, may duplicate. Exactly-once: guaranteed once, expensive and often a lie in practice | Day 2 | [ ] |
+| T11 | Idempotency | Same operation called N times produces the same result as calling it once — required for at-least-once consumers and safe retries | Day 2 | [ ] |
+| T12 | Backpressure | When a consumer is slower than a producer, the queue grows unboundedly — systems need to either slow the producer, drop messages, or scale the consumer | Day 2 | [ ] |
+| T13 | Dead letter queue (DLQ) | Messages that fail processing repeatedly are moved to a DLQ instead of blocking the main queue — lets you inspect and replay them separately | Day 2 optional | [ ] |
+| T14 | CAP theorem | A distributed system can guarantee at most two of: Consistency, Availability, Partition tolerance — partitions always happen, so every system trades off C vs A | Day 2 | [ ] |
+| T15 | ACID vs BASE | ACID (relational DBs): Atomic, Consistent, Isolated, Durable. BASE (distributed systems): Basically Available, Soft state, Eventually consistent — explains why caches and queues behave differently than a DB | Day 2 | [ ] |
+| T16 | Database fundamentals | Index = pre-sorted lookup structure (fast reads, slower writes). N+1 problem = one query to list N records + N queries for each record's relations. Connection pool = reuse connections instead of opening one per request | Day 4 | [ ] |
+| T17 | ORM vs raw SQL | ORM (e.g. GORM): maps structs to tables, handles relations, migration — convenient but hides the SQL and can produce bad queries. Raw SQL (`database/sql`, `sqlx`): explicit, fast, verbose. Go culture leans toward `sqlx` or query builders over full ORMs | Day 4 | [ ] |
+| T18 | Observability pillars | Logs: what happened (structured, queryable). Metrics: how much / how fast (counters, gauges, histograms). Traces: where time was spent across service boundaries. Different tools for different questions | Day 4 | [ ] |
+| T19 | Circuit breaker | When a dependency fails repeatedly, stop calling it for a cooldown period (open state) — fail fast instead of piling up slow failures that exhaust threads/goroutines | Day 5 | [ ] |
+| T20 | Retry with exponential backoff + jitter | On failure, wait 2^n seconds before retrying — jitter (random offset) prevents all retriers hitting the service simultaneously (thundering herd) | Day 5 | [ ] |
+
+---
+
+## Day 1 — Go Fundamentals
+
+**Goal:** You can write and run a working HTTP server in Go from scratch.
+
+### ~~Morning (2-3h): Language basics~~ ✅ Done
+- ~~[A Tour of Go](https://go.dev/tour)~~ — completed via [w3schools.com/go](https://www.w3schools.com/go/index.php)
+- Key insight: Go structs + interfaces are like Terraform resource schemas — typed, explicit, composed
+
+### Afternoon (2-3h): Build a small HTTP API
+- Write a REST API with the standard library (`net/http`) — no frameworks
+- Endpoints: `GET /items`, `POST /items`, `GET /items/{id}`
+- Use `encoding/json` for marshaling
+- This solidifies: structs, error handling, handlers, JSON
+
+### Evening (1h): Go modules & tooling
+- `go mod init`, `go get`, `go run`, `go build`, `go test`
+- Think of `go.mod` as your `versions.tf`
+
+### Optional (if ahead of schedule)
+- Add middleware: a simple request logger that wraps your handlers
+- Read [Effective Go](https://go.dev/doc/effective_go) sections on error handling and concurrency
+- Try goroutines: process items concurrently using `sync.WaitGroup`
+
+---
+
+## Day 2 — Messaging + Caching + Distributed Patterns
+
+**Goal:** Running services that communicate via events and serve cached reads.
+
+Key mental model: **messaging decouples producers from consumers; caching decouples hot reads from slow storage**.
+
+### Morning (2h): Redis / Caching
+- Run Redis locally: `docker run -p 6379:6379 redis`
+- Use the `go-redis` client (`github.com/redis/go-redis/v9`)
+- Implement: SET/GET a value, TTL expiry, a simple cache-aside pattern in your Day 1 API
+- Cache-aside pattern: try cache → on miss, hit "DB" (a map is fine) → write back to cache
+
+### Midday (2-3h): Messaging with NATS
+- Run NATS: `docker run -p 4222:4222 nats`
+- Use `github.com/nats-io/nats.go`
+- Build a producer that publishes item-created events, a subscriber that logs them
+- Then try NATS JetStream for durable messaging (like Kafka topics, but simpler to run)
+- Why NATS over Kafka for learning: single binary, no Zookeeper, same pub/sub concepts
+
+### Afternoon (2h): Wire it together
+- Extend your Day 1 API: on `POST /items`, write to cache AND publish a NATS event
+- Write a separate `cmd/consumer/main.go` that subscribes and logs
+- Now you have a basic event-driven service
+
+### Optional (if ahead of schedule)
+- Replace the in-memory map with a real SQLite or Postgres store (use `database/sql` + `github.com/mattn/go-sqlite3`)
+- Implement cache invalidation: delete the cache key on `DELETE /items/{id}`
+- Try Kafka instead of NATS using `github.com/segmentio/kafka-go` — same concepts, more production-realistic
+- Add structured logging with `log/slog` (stdlib, Go 1.21+) and include a trace/correlation ID in every log line
+
+---
+
+## Day 3 — Kubernetes Operator
+
+**Goal:** A running operator that responds to custom resources.
+
+An operator is just: watch for custom resources → reconcile state.
+
+### Morning (2h): Controller concepts
+- Read the [operator pattern docs](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) — ~20 min
+- Key mental model: a controller is a `for` loop that watches k8s API events and drives actual state toward desired state — the same reconcile loop Terraform does, but continuously running inside the cluster instead of on your laptop
+- Install tools:
+  ```bash
+  brew install kubebuilder
+  brew install kind   # or k3d
+  kind create cluster
+  ```
+
+### Midday (3h): Scaffold and implement a basic operator
+
+```bash
+kubebuilder init --domain example.com --repo github.com/you/myoperator
+kubebuilder create api --group apps --version v1alpha1 --kind Widget
+```
+
+**Operator goal:** A `Widget` custom resource that creates a `ConfigMap` with the widget's spec fields as data. That's it — no complex business logic. The point is to understand the reconcile loop.
+
+1. Edit the generated `spec` struct in `api/v1alpha1/widget_types.go`
+2. Implement `Reconcile()` in `internal/controller/widget_controller.go`: get the Widget, create/update a ConfigMap
+3. `make install` to install the CRD, `make run` to run the controller locally against your cluster
+
+### Afternoon (1-2h): Connect your Day 2 work
+- In the reconciler, also publish a NATS event when a Widget is created/updated
+- This ties everything together: Go + messaging + k8s operator
+
+### Optional (if ahead of schedule)
+- Add a `status` subresource to your Widget CRD and update it in the reconciler (`updateStatus`)
+- Handle deletion with a finalizer — prevents the resource being deleted before cleanup runs
+- Deploy the operator into your kind cluster as a real Pod: `make docker-build`, `make deploy`
+
+---
+
+## Day 4 (Optional) — Production-Grade API
+
+**Goal:** Turn your Day 1-2 API into something that looks like a real service.
+
+- Swap `net/http` for [chi](https://github.com/go-chi/chi) or [gin](https://github.com/gin-gonic/gin) — learn routing, middleware, request binding
+- Add proper validation with `github.com/go-playground/validator/v10`
+- Add structured logging (`log/slog`) and distributed tracing with OpenTelemetry (`go.opentelemetry.io/otel`)
+- Add Prometheus metrics: request count, latency histograms — use `github.com/prometheus/client_golang`
+- Write a `docker-compose.yml` that wires up your API, Redis, NATS, and a Postgres database together
+- Add a health check endpoint (`GET /healthz`) and a readiness endpoint (`GET /readyz`) — standard for k8s deployments
+- Deploy the full stack to your kind cluster using a Helm chart you write yourself
+
+---
+
+## Day 5 (Optional) — Distributed Systems Depth
+
+**Goal:** Understand the hard problems — consistency, failure modes, observability.
+
+- **Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis
+- **Circuit breaker:** Implement a basic circuit breaker around your cache calls using `github.com/sony/gobreaker`
+- **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`)
+- **Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API
+- **Kafka deep dive:** Replace NATS JetStream with Kafka, implement consumer groups, understand partition assignment and offset management
+- **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.)
+- **Read:** [Designing Distributed Systems](https://www.oreilly.com/library/view/designing-distributed-systems/9781491983638/) ch. 1-4 (free online) — patterns like sidecar, ambassador, adapter map directly to k8s
+
+---
+
+## Key Resources
+
+| Topic | Resource |
+|---|---|
+| Go language | [go.dev/tour](https://go.dev/tour) |
+| Effective Go | [go.dev/doc/effective_go](https://go.dev/doc/effective_go) |
+| Go HTTP | [pkg.go.dev/net/http](https://pkg.go.dev/net/http) |
+| Redis (go-redis) | [redis.uptrace.dev](https://redis.uptrace.dev) |
+| NATS | [docs.nats.io](https://docs.nats.io) |
+| kubebuilder | [book.kubebuilder.io](https://book.kubebuilder.io) — ch. 1-3 only |
+| Operator pattern | [kubernetes.io/docs/concepts/extend-kubernetes/operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) |
+
+---
+
+## Where to start right now
+
+[go.dev/tour](https://go.dev/tour) — get through it today. Everything else unlocks from there.
