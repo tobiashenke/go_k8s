@@ -24,7 +24,7 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 |---|---|---|---|---|
 | T1 | HTTP fundamentals | Methods, status codes, headers, idempotency (GET/PUT safe to retry, POST is not) | Day 1 | [x] |
 | T2 | REST design principles | Resources are nouns, verbs are HTTP methods, state lives on the server not the client | Day 1 | [x] |
-| T3 | API error design | Errors need a consistent shape — RFC 7807 "Problem Details" is the standard (`type`, `title`, `status`, `detail`) | Day 1 | [ ] |
+| T3 | API error design | Errors need a consistent shape — RFC 7807 "Problem Details" is the standard (`type`, `title`, `status`, `detail`) | Day 1 | [x] |
 | T4 | Dependency Injection | Pass dependencies in from outside rather than constructing them inside — enables swapping implementations without changing callers | Day 1 | [x] |
 | T5 | Repository pattern | Abstract all data access behind an interface (`type ItemRepository interface { Get, Save, Delete }`) — business logic never touches storage directly | Day 1 | [x] |
 | T6 | Service layer pattern | HTTP handler → Service (business logic) → Repository (storage) — each layer knows nothing about the layers below it | Day 1 | [x] |
