@@ -80,10 +80,9 @@ Key mental model: **messaging decouples producers from consumers; caching decoup
 ### ~~Afternoon (2h): Wire it together~~ ✅ Done
 
 ### Optional (if ahead of schedule)
-- Replace the in-memory map with a real SQLite or Postgres store (use `database/sql` + `github.com/mattn/go-sqlite3`)
 - Implement cache invalidation: delete the cache key on `DELETE /items/{id}`
-- Try Kafka instead of NATS using `github.com/segmentio/kafka-go` — same concepts, more production-realistic
 - Add structured logging with `log/slog` (stdlib, Go 1.21+) and include a trace/correlation ID in every log line
+- Replace the in-memory map with a real SQLite or Postgres store (use `database/sql` + `github.com/mattn/go-sqlite3`)
 
 ---
 
