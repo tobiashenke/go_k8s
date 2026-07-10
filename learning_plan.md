@@ -23,11 +23,11 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | # | Topic | One-line explanation | Required before | Done |
 |---|---|---|---|---|
 | T1 | HTTP fundamentals | Methods, status codes, headers, idempotency (GET/PUT safe to retry, POST is not) | Day 1 | [x] |
-| T2 | REST design principles | Resources are nouns, verbs are HTTP methods, state lives on the server not the client | Day 1 | [ ] |
+| T2 | REST design principles | Resources are nouns, verbs are HTTP methods, state lives on the server not the client | Day 1 | [x] |
 | T3 | API error design | Errors need a consistent shape — RFC 7807 "Problem Details" is the standard (`type`, `title`, `status`, `detail`) | Day 1 | [ ] |
-| T4 | Dependency Injection | Pass dependencies in from outside rather than constructing them inside — enables swapping implementations without changing callers | Day 1 | [ ] |
-| T5 | Repository pattern | Abstract all data access behind an interface (`type ItemRepository interface { Get, Save, Delete }`) — business logic never touches storage directly | Day 1 | [ ] |
-| T6 | Service layer pattern | HTTP handler → Service (business logic) → Repository (storage) — each layer knows nothing about the layers below it | Day 1 | [ ] |
+| T4 | Dependency Injection | Pass dependencies in from outside rather than constructing them inside — enables swapping implementations without changing callers | Day 1 | [x] |
+| T5 | Repository pattern | Abstract all data access behind an interface (`type ItemRepository interface { Get, Save, Delete }`) — business logic never touches storage directly | Day 1 | [x] |
+| T6 | Service layer pattern | HTTP handler → Service (business logic) → Repository (storage) — each layer knows nothing about the layers below it | Day 1 | [x] |
 | T7 | Middleware pattern | A function that wraps a handler to add cross-cutting behaviour (logging, auth, rate limiting) without touching the handler itself | Day 1 optional | [ ] |
 | T8 | Caching strategies | Cache-aside (read): check cache first, on miss load from DB and write to cache. Write-through: write to DB and cache together. Write-behind: write to cache, flush to DB async | Day 2 | [ ] |
 | T9 | TTL, LRU eviction, cache stampede | TTL: entry expires after fixed time. LRU: evict least-recently-used when full. Stampede: all requests miss simultaneously → all hit DB → overload | Day 2 | [ ] |
@@ -53,7 +53,7 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 - ~~[A Tour of Go](https://go.dev/tour)~~ — completed via [w3schools.com/go](https://www.w3schools.com/go/index.php)
 - Key insight: Go structs + interfaces are like Terraform resource schemas — typed, explicit, composed
 
-### Afternoon (2-3h): Build a small HTTP API
+### ~~Afternoon (2-3h): Build a small HTTP API~~ ✅ Done
 - Write a REST API with the standard library (`net/http`) — no frameworks
 - Endpoints: `GET /items`, `POST /items`, `GET /items/{id}`
 - Use `encoding/json` for marshaling
@@ -187,3 +187,9 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 ## Where to start right now
 
 [go.dev/tour](https://go.dev/tour) — get through it today. Everything else unlocks from there.
+
+
+## Guides and Roadmaps
+
+Golang: https://roadmap.sh/golang
+Backend: https://roadmap.sh/backend
