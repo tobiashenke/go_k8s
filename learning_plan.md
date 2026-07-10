@@ -75,23 +75,9 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 
 Key mental model: **messaging decouples producers from consumers; caching decouples hot reads from slow storage**.
 
-### Morning (2h): Redis / Caching
-- Run Redis locally: `docker run -p 6379:6379 redis`
-- Use the `go-redis` client (`github.com/redis/go-redis/v9`)
-- Implement: SET/GET a value, TTL expiry, a simple cache-aside pattern in your Day 1 API
-- Cache-aside pattern: try cache → on miss, hit "DB" (a map is fine) → write back to cache
-
-### Midday (2-3h): Messaging with NATS
-- Run NATS: `docker run -p 4222:4222 nats`
-- Use `github.com/nats-io/nats.go`
-- Build a producer that publishes item-created events, a subscriber that logs them
-- Then try NATS JetStream for durable messaging (like Kafka topics, but simpler to run)
-- Why NATS over Kafka for learning: single binary, no Zookeeper, same pub/sub concepts
-
-### Afternoon (2h): Wire it together
-- Extend your Day 1 API: on `POST /items`, write to cache AND publish a NATS event
-- Write a separate `cmd/consumer/main.go` that subscribes and logs
-- Now you have a basic event-driven service
+### ~~Morning (2h): Redis / Caching~~ ✅ Done
+### ~~Midday (2-3h): Messaging with NATS~~ ✅ Done
+### ~~Afternoon (2h): Wire it together~~ ✅ Done
 
 ### Optional (if ahead of schedule)
 - Replace the in-memory map with a real SQLite or Postgres store (use `database/sql` + `github.com/mattn/go-sqlite3`)
