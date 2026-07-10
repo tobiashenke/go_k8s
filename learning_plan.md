@@ -28,7 +28,7 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T4 | Dependency Injection | Pass dependencies in from outside rather than constructing them inside — enables swapping implementations without changing callers | Day 1 | [x] |
 | T5 | Repository pattern | Abstract all data access behind an interface (`type ItemRepository interface { Get, Save, Delete }`) — business logic never touches storage directly | Day 1 | [x] |
 | T6 | Service layer pattern | HTTP handler → Service (business logic) → Repository (storage) — each layer knows nothing about the layers below it | Day 1 | [x] |
-| T7 | Middleware pattern | A function that wraps a handler to add cross-cutting behaviour (logging, auth, rate limiting) without touching the handler itself | Day 1 optional | [ ] |
+| T7 | Middleware pattern | A function that wraps a handler to add cross-cutting behaviour (logging, auth, rate limiting) without touching the handler itself | Day 1 optional | [x] |
 | T8 | Caching strategies | Cache-aside (read): check cache first, on miss load from DB and write to cache. Write-through: write to DB and cache together. Write-behind: write to cache, flush to DB async | Day 2 | [ ] |
 | T9 | TTL, LRU eviction, cache stampede | TTL: entry expires after fixed time. LRU: evict least-recently-used when full. Stampede: all requests miss simultaneously → all hit DB → overload | Day 2 | [ ] |
 | T10 | Messaging delivery guarantees | At-most-once: fire and forget, may lose. At-least-once: retried until acked, may duplicate. Exactly-once: guaranteed once, expensive and often a lie in practice | Day 2 | [ ] |
@@ -59,14 +59,13 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 - Use `encoding/json` for marshaling
 - This solidifies: structs, error handling, handlers, JSON
 
-### Evening (1h): Go modules & tooling
+### ~~Evening (1h): Go modules & tooling~~ ✅ Done
 - `go mod init`, `go get`, `go run`, `go build`, `go test`
 - Think of `go.mod` as your `versions.tf`
 
-### Optional (if ahead of schedule)
-- Add middleware: a simple request logger that wraps your handlers
-- Read [Effective Go](https://go.dev/doc/effective_go) sections on error handling and concurrency
-- Try goroutines: process items concurrently using `sync.WaitGroup`
+### ~~Optional (if ahead of schedule)~~ ✅ Done
+- ~~Add middleware: a simple request logger that wraps your handlers~~ ✅
+- ~~Try goroutines: process items concurrently using `sync.WaitGroup`~~ ✅
 
 ---
 
@@ -167,6 +166,7 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 - **Kafka deep dive:** Replace NATS JetStream with Kafka, implement consumer groups, understand partition assignment and offset management
 - **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.)
 - **Read:** [Designing Distributed Systems](https://www.oreilly.com/library/view/designing-distributed-systems/9781491983638/) ch. 1-4 (free online) — patterns like sidecar, ambassador, adapter map directly to k8s
+- **Read:** [Effective Go](https://go.dev/doc/effective_go) sections on concurrency — channels, goroutines, CSP model
 
 ---
 
