@@ -29,8 +29,8 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T5 | Repository pattern | Abstract all data access behind an interface (`type ItemRepository interface { Get, Save, Delete }`) — business logic never touches storage directly | Day 1 | [x] |
 | T6 | Service layer pattern | HTTP handler → Service (business logic) → Repository (storage) — each layer knows nothing about the layers below it | Day 1 | [x] |
 | T7 | Middleware pattern | A function that wraps a handler to add cross-cutting behaviour (logging, auth, rate limiting) without touching the handler itself | Day 1 optional | [x] |
-| T8 | Caching strategies | Cache-aside (read): check cache first, on miss load from DB and write to cache. Write-through: write to DB and cache together. Write-behind: write to cache, flush to DB async | Day 2 | [ ] |
-| T9 | TTL, LRU eviction, cache stampede | TTL: entry expires after fixed time. LRU: evict least-recently-used when full. Stampede: all requests miss simultaneously → all hit DB → overload | Day 2 | [ ] |
+| T8 | Caching strategies | Cache-aside (read): check cache first, on miss load from DB and write to cache. Write-through: write to DB and cache together. Write-behind: write to cache, flush to DB async | Day 2 | [x] |
+| T9 | TTL, LRU eviction, cache stampede | TTL: entry expires after fixed time. LRU: evict least-recently-used when full. Stampede: all requests miss simultaneously → all hit DB → overload | Day 2 | [x] |
 | T10 | Messaging delivery guarantees | At-most-once: fire and forget, may lose. At-least-once: retried until acked, may duplicate. Exactly-once: guaranteed once, expensive and often a lie in practice | Day 2 | [ ] |
 | T11 | Idempotency | Same operation called N times produces the same result as calling it once — required for at-least-once consumers and safe retries | Day 2 | [ ] |
 | T12 | Backpressure | When a consumer is slower than a producer, the queue grows unboundedly — systems need to either slow the producer, drop messages, or scale the consumer | Day 2 | [ ] |

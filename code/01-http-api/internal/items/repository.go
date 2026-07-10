@@ -4,7 +4,7 @@ import "fmt"
 
 type ItemRepository interface {
 	Save(item Item) error
-	Get(ID string) (*Item, error)
+	Get(id string) (*Item, error)
 	GetAll() ([]Item, error)
 }
 
@@ -21,10 +21,10 @@ func (r *InMemoryItemRepository) Save(item Item) error {
 	return nil
 }
 
-func (r *InMemoryItemRepository) Get(ID string) (*Item, error) {
-	item, ok := r.repo[ID]
+func (r *InMemoryItemRepository) Get(id string) (*Item, error) {
+	item, ok := r.repo[id]
 	if !ok {
-		return nil, fmt.Errorf("Item does not exist")
+		return nil, fmt.Errorf("item does not exist")
 	}
 	return &item, nil
 }

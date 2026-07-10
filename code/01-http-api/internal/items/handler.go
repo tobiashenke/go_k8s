@@ -6,15 +6,15 @@ import (
 )
 
 type ItemHandler struct {
-	ItemService *ItemService
+	service *ItemService
 }
 
 func NewItemHandler(i *ItemService) *ItemHandler {
-	return &ItemHandler{ItemService: i}
+	return &ItemHandler{service: i}
 }
 
 func (h *ItemHandler) HandleGetAll(w http.ResponseWriter, r *http.Request) {
-	items, err := h.ItemService.GetAll()
+	items, err := h.service.GetAll()
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to retrieve items")
 		return
@@ -31,7 +31,7 @@ func (h *ItemHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	err = h.ItemService.Save(item)
+	err = h.service.Save(item)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to save item")
 		return
@@ -43,7 +43,7 @@ func (h *ItemHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 
 func (h *ItemHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
-	item, err := h.ItemService.Get(id)
+	item, err := h.service.Get(id)
 	if err != nil {
 		writeError(w, http.StatusNotFound, "item not found")
 		return

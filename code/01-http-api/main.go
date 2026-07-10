@@ -7,9 +7,12 @@ import (
 	"github.com/tobiashenke/go_k8s/internal/items"
 )
 
+const redisAddr = "localhost:6379"
+
 func main() {
 	repo := items.NewInMemoryItemRepository()
-	service := items.NewItemService(repo)
+	c := items.NewItemCache(redisAddr)
+	service := items.NewItemService(repo, c)
 	itemHandler := items.NewItemHandler(service)
 
 	// Setup the server
