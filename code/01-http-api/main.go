@@ -19,7 +19,7 @@ func main() {
 	mux.HandleFunc("GET /items/{id}", itemHandler.HandleGetByID)
 
 	// Start the server
-	err := http.ListenAndServe(":8087", mux)
+	err := http.ListenAndServe(":8087", items.LoggingMiddleware((mux)))
 	if err != nil {
 		log.Fatal(err)
 	}
