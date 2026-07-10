@@ -31,8 +31,8 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T7 | Middleware pattern | A function that wraps a handler to add cross-cutting behaviour (logging, auth, rate limiting) without touching the handler itself | Day 1 optional | [x] |
 | T8 | Caching strategies | Cache-aside (read): check cache first, on miss load from DB and write to cache. Write-through: write to DB and cache together. Write-behind: write to cache, flush to DB async | Day 2 | [x] |
 | T9 | TTL, LRU eviction, cache stampede | TTL: entry expires after fixed time. LRU: evict least-recently-used when full. Stampede: all requests miss simultaneously → all hit DB → overload | Day 2 | [x] |
-| T10 | Messaging delivery guarantees | At-most-once: fire and forget, may lose. At-least-once: retried until acked, may duplicate. Exactly-once: guaranteed once, expensive and often a lie in practice | Day 2 | [ ] |
-| T11 | Idempotency | Same operation called N times produces the same result as calling it once — required for at-least-once consumers and safe retries | Day 2 | [ ] |
+| T10 | Messaging delivery guarantees | At-most-once: fire and forget, may lose. At-least-once: retried until acked, may duplicate. Exactly-once: guaranteed once, expensive and often a lie in practice | Day 2 | [x] |
+| T11 | Idempotency | Same operation called N times produces the same result as calling it once — required for at-least-once consumers and safe retries | Day 2 | [x] |
 | T12 | Backpressure | When a consumer is slower than a producer, the queue grows unboundedly — systems need to either slow the producer, drop messages, or scale the consumer | Day 2 | [ ] |
 | T13 | Dead letter queue (DLQ) | Messages that fail processing repeatedly are moved to a DLQ instead of blocking the main queue — lets you inspect and replay them separately | Day 2 optional | [ ] |
 | T14 | CAP theorem | A distributed system can guarantee at most two of: Consistency, Availability, Partition tolerance — partitions always happen, so every system trades off C vs A | Day 2 | [ ] |

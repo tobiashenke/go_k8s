@@ -9,12 +9,14 @@ import (
 type ItemService struct {
 	r ItemRepository
 	c *ItemCache
+	p *ItemPublisher
 }
 
-func NewItemService(ir ItemRepository, ic *ItemCache) *ItemService {
+func NewItemService(ir ItemRepository, ic *ItemCache, ip *ItemPublisher) *ItemService {
 	return &ItemService{
 		r: ir,
 		c: ic,
+		p: ip,
 	}
 }
 
@@ -35,7 +37,12 @@ func (i *ItemService) Get(id string) (*Item, error) {
 }
 
 func (i *ItemService) Save(item Item) error {
-	return i.r.Save(item)
+	err := i.r.Save(item)
+	if err != nil {
+		return err
+	}
+	err = i.p.Publish(item)
+	return err
 }
 
 func (i *ItemService) GetAll() ([]Item, error) {

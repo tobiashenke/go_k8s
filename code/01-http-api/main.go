@@ -8,11 +8,16 @@ import (
 )
 
 const redisAddr = "localhost:6379"
+const natsUrl = "nats://localhost:4222"
 
 func main() {
 	repo := items.NewInMemoryItemRepository()
 	c := items.NewItemCache(redisAddr)
-	service := items.NewItemService(repo, c)
+	p, err := items.NewItemPublisher(natsUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	service := items.NewItemService(repo, c, p)
 	itemHandler := items.NewItemHandler(service)
 
 	// Setup the server
@@ -22,7 +27,7 @@ func main() {
 	mux.HandleFunc("GET /items/{id}", itemHandler.HandleGetByID)
 
 	// Start the server
-	err := http.ListenAndServe(":8087", items.LoggingMiddleware((mux)))
+	err = http.ListenAndServe(":8087", items.LoggingMiddleware((mux)))
 	if err != nil {
 		log.Fatal(err)
 	}
