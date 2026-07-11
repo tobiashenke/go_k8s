@@ -21,11 +21,31 @@ func NewItemPublisher(natsUrl string) (*ItemPublisher, error) {
 	return p, nil
 }
 
-func (p *ItemPublisher) Publish(item Item) error {
+func (p *ItemPublisher) publish(data []byte, action string) error {
+	err := p.conn.Publish(action, data)
+	return err
+}
+
+func (p *ItemPublisher) PublishCreate(item Item) error {
 	data, err := json.Marshal(item)
 	if err != nil {
 		return err
 	}
-	err = p.conn.Publish("items.created", data)
-	return err
+	err = p.publish(data, "items.created")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *ItemPublisher) PublishDelete(id string) error {
+	data, err := json.Marshal(id)
+	if err != nil {
+		return err
+	}
+	err = p.publish(data, "items.deleted")
+	if err != nil {
+		return err
+	}
+	return nil
 }

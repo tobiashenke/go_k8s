@@ -42,3 +42,11 @@ func (c *ItemCache) Get(ctx context.Context, id string) (*Item, error) {
 	}
 	return &item, nil
 }
+
+func (c *ItemCache) Delete(ctx context.Context, id string) error {
+	r := c.client.Del(ctx, id)
+	if r.Err() != nil {
+		return r.Err()
+	}
+	return nil
+}

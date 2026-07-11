@@ -41,10 +41,26 @@ func (i *ItemService) Save(item Item) error {
 	if err != nil {
 		return err
 	}
-	err = i.p.Publish(item)
+	err = i.p.PublishCreate(item)
 	return err
 }
 
 func (i *ItemService) GetAll() ([]Item, error) {
 	return i.r.GetAll()
+}
+
+func (i *ItemService) Delete(id string) error {
+	err := i.r.Delete(id)
+	if err != nil {
+		return err
+	}
+	err = i.c.Delete(context.Background(), id)
+	if err != nil {
+		return err
+	}
+	err = i.p.PublishDelete(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

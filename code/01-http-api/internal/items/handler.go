@@ -53,6 +53,16 @@ func (h *ItemHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(item)
 }
 
+func (h *ItemHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	err := h.service.Delete((id))
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "item not deleted")
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
 type ErrorResponse struct {
 	Type   string
 	Title  string

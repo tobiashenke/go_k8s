@@ -6,6 +6,7 @@ type ItemRepository interface {
 	Save(item Item) error
 	Get(id string) (*Item, error)
 	GetAll() ([]Item, error)
+	Delete(id string) error
 }
 
 type InMemoryItemRepository struct {
@@ -35,4 +36,9 @@ func (r *InMemoryItemRepository) GetAll() ([]Item, error) {
 		repoList = append(repoList, v)
 	}
 	return repoList, nil
+}
+
+func (r *InMemoryItemRepository) Delete(id string) error {
+	delete(r.repo, id)
+	return nil
 }
