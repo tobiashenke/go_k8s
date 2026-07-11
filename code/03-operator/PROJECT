@@ -8,4 +8,14 @@ layout:
 - go.kubebuilder.io/v4
 projectName: 03-operator
 repo: github.com/tobiashenke/go_k8s/operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: henkebyte.dev
+  group: apps
+  kind: Widget
+  path: github.com/tobiashenke/go_k8s/operator/api/v1alpha1
+  version: v1alpha1
 version: "3"
