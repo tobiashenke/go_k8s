@@ -33,12 +33,12 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T9 | TTL, LRU eviction, cache stampede | TTL: entry expires after fixed time. LRU: evict least-recently-used when full. Stampede: all requests miss simultaneously → all hit DB → overload | Day 2 | [x] |
 | T10 | Messaging delivery guarantees | At-most-once: fire and forget, may lose. At-least-once: retried until acked, may duplicate. Exactly-once: guaranteed once, expensive and often a lie in practice | Day 2 | [x] |
 | T11 | Idempotency | Same operation called N times produces the same result as calling it once — required for at-least-once consumers and safe retries | Day 2 | [x] |
-| T12 | Backpressure | When a consumer is slower than a producer, the queue grows unboundedly — systems need to either slow the producer, drop messages, or scale the consumer | Day 2 | [ ] |
-| T13 | Dead letter queue (DLQ) | Messages that fail processing repeatedly are moved to a DLQ instead of blocking the main queue — lets you inspect and replay them separately | Day 2 optional | [ ] |
-| T14 | CAP theorem | A distributed system can guarantee at most two of: Consistency, Availability, Partition tolerance — partitions always happen, so every system trades off C vs A | Day 2 | [ ] |
-| T15 | ACID vs BASE | ACID (relational DBs): Atomic, Consistent, Isolated, Durable. BASE (distributed systems): Basically Available, Soft state, Eventually consistent — explains why caches and queues behave differently than a DB | Day 2 | [ ] |
-| T16 | Database fundamentals | Index = pre-sorted lookup structure (fast reads, slower writes). N+1 problem = one query to list N records + N queries for each record's relations. Connection pool = reuse connections instead of opening one per request | Day 4 | [x] |
-| T17 | ORM vs raw SQL | ORM (e.g. GORM): maps structs to tables, handles relations, migration — convenient but hides the SQL and can produce bad queries. Raw SQL (`database/sql`, `sqlx`): explicit, fast, verbose. Go culture leans toward `sqlx` or query builders over full ORMs | Day 4 | [x] |
+| T12 | Dead letter queue (DLQ) | Messages that fail processing repeatedly are moved to a DLQ instead of blocking the main queue — lets you inspect and replay them separately | Day 2 optional | [x] |
+| T13 | Database fundamentals | Index = pre-sorted lookup structure (fast reads, slower writes). N+1 problem = one query to list N records + N queries for each record's relations. Connection pool = reuse connections instead of opening one per request | Day 2 | [x] |
+| T14 | ORM vs raw SQL | ORM (e.g. GORM): maps structs to tables, handles relations, migration — convenient but hides the SQL and can produce bad queries. Raw SQL (`database/sql`, `sqlx`): explicit, fast, verbose. Go culture leans toward `sqlx` or query builders over full ORMs | Day 2 | [x] |
+| T15 | Backpressure | When a consumer is slower than a producer, the queue grows unboundedly — systems need to either slow the producer, drop messages, or scale the consumer | Day 3 | [ ] |
+| T16 | CAP theorem | A distributed system can guarantee at most two of: Consistency, Availability, Partition tolerance — partitions always happen, so every system trades off C vs A | Day 3 | [ ] |
+| T17 | ACID vs BASE | ACID (relational DBs): Atomic, Consistent, Isolated, Durable. BASE (distributed systems): Basically Available, Soft state, Eventually consistent — explains why caches and queues behave differently than a DB | Day 3 | [ ] |
 | T18 | Observability pillars | Logs: what happened (structured, queryable). Metrics: how much / how fast (counters, gauges, histograms). Traces: where time was spent across service boundaries. Different tools for different questions | Day 4 | [ ] |
 | T19 | Circuit breaker | When a dependency fails repeatedly, stop calling it for a cooldown period (open state) — fail fast instead of piling up slow failures that exhaust threads/goroutines | Day 5 | [ ] |
 | T20 | Retry with exponential backoff + jitter | On failure, wait 2^n seconds before retrying — jitter (random offset) prevents all retriers hitting the service simultaneously (thundering herd) | Day 5 | [ ] |
@@ -82,7 +82,8 @@ Key mental model: **messaging decouples producers from consumers; caching decoup
 ### ~~Optional (if ahead of schedule)~~ ✅ Done
 - ~~Implement cache invalidation: delete the cache key on `DELETE /items/{id}`~~ ✅
 - ~~Add structured logging with `log/slog` (stdlib, Go 1.21+) and include a trace/correlation ID in every log line~~ ✅
-- ~~Replace the in-memory map with a real SQLite or Postgres store (use `database/sql` + `github.com/mattn/go-sqlite3`)~~ ✅
+- ~~Replace the in-memory map with a real SQLite store using raw SQL (`database/sql`)~~ ✅
+- ~~Migrated SQLite repository from raw SQL to GORM ORM~~ ✅
 
 ---
 
