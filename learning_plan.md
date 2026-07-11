@@ -82,7 +82,7 @@ Key mental model: **messaging decouples producers from consumers; caching decoup
 ### ~~Optional (if ahead of schedule)~~ ✅ Done
 - ~~Implement cache invalidation: delete the cache key on `DELETE /items/{id}`~~ ✅
 - ~~Add structured logging with `log/slog` (stdlib, Go 1.21+) and include a trace/correlation ID in every log line~~ ✅
-- Replace the in-memory map with a real SQLite or Postgres store (use `database/sql` + `github.com/mattn/go-sqlite3`)
+- ~~Replace the in-memory map with a real SQLite or Postgres store (use `database/sql` + `github.com/mattn/go-sqlite3`)~~ ✅
 
 ---
 
