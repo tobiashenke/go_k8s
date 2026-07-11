@@ -17,7 +17,11 @@ func main() {
 	slog.SetDefault(logger)
 
 	// Business logic
-	repo := items.NewInMemoryItemRepository()
+	repo, err := items.NewSQLiteItemRepository()
+	if err != nil {
+		slog.Error("failed to open SQLite database", "error", err)
+		os.Exit(1)
+	}
 	c := items.NewItemCache(redisAddr)
 	p, err := items.NewItemPublisher(natsUrl)
 	if err != nil {

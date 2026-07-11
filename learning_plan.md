@@ -38,7 +38,7 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T14 | CAP theorem | A distributed system can guarantee at most two of: Consistency, Availability, Partition tolerance — partitions always happen, so every system trades off C vs A | Day 2 | [ ] |
 | T15 | ACID vs BASE | ACID (relational DBs): Atomic, Consistent, Isolated, Durable. BASE (distributed systems): Basically Available, Soft state, Eventually consistent — explains why caches and queues behave differently than a DB | Day 2 | [ ] |
 | T16 | Database fundamentals | Index = pre-sorted lookup structure (fast reads, slower writes). N+1 problem = one query to list N records + N queries for each record's relations. Connection pool = reuse connections instead of opening one per request | Day 4 | [x] |
-| T17 | ORM vs raw SQL | ORM (e.g. GORM): maps structs to tables, handles relations, migration — convenient but hides the SQL and can produce bad queries. Raw SQL (`database/sql`, `sqlx`): explicit, fast, verbose. Go culture leans toward `sqlx` or query builders over full ORMs | Day 4 | [x] |
+| T17 | ORM vs raw SQL | ORM (e.g. GORM): maps structs to tables, handles relations, migration — convenient but hides the SQL and can produce bad queries. Raw SQL (`database/sql`, `sqlx`): explicit, fast, verbose. Go culture leans toward `sqlx` or query builders over full ORMs | Day 4 | [ ] |
 | T18 | Observability pillars | Logs: what happened (structured, queryable). Metrics: how much / how fast (counters, gauges, histograms). Traces: where time was spent across service boundaries. Different tools for different questions | Day 4 | [ ] |
 | T19 | Circuit breaker | When a dependency fails repeatedly, stop calling it for a cooldown period (open state) — fail fast instead of piling up slow failures that exhaust threads/goroutines | Day 5 | [ ] |
 | T20 | Retry with exponential backoff + jitter | On failure, wait 2^n seconds before retrying — jitter (random offset) prevents all retriers hitting the service simultaneously (thundering herd) | Day 5 | [ ] |
@@ -149,6 +149,7 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 - **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`)
 - **Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API
 - **Kafka deep dive:** Replace NATS JetStream with Kafka, implement consumer groups, understand partition assignment and offset management
+- **Postgres:** Add a Postgres service to docker-compose, swap SQLite repository for a `PostgresItemRepository` using `database/sql` — same interface, different driver (`github.com/lib/pq`), learn about connection strings and connection pooling
 - **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.)
 - **Read:** [Designing Distributed Systems](https://www.oreilly.com/library/view/designing-distributed-systems/9781491983638/) ch. 1-4 (free online) — patterns like sidecar, ambassador, adapter map directly to k8s
 - **Read:** [Effective Go](https://go.dev/doc/effective_go) sections on concurrency — channels, goroutines, CSP model

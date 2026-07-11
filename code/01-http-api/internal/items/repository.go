@@ -31,11 +31,11 @@ func (r *InMemoryItemRepository) Get(id string) (*Item, error) {
 }
 
 func (r *InMemoryItemRepository) GetAll() ([]Item, error) {
-	repoList := make([]Item, 0, len(r.repo))
+	itemList := make([]Item, 0, len(r.repo))
 	for _, v := range r.repo {
-		repoList = append(repoList, v)
+		itemList = append(itemList, v)
 	}
-	return repoList, nil
+	return itemList, nil
 }
 
 func (r *InMemoryItemRepository) Delete(id string) error {
