@@ -7,8 +7,7 @@ import (
 
 // WidgetSpec defines the desired state of Widget
 type WidgetSpec struct {
-	// +optional
-	Foo *string `json:"foo,omitempty"`
+	Message string `json:"message"`
 }
 
 // WidgetStatus defines the observed state of Widget.

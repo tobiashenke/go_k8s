@@ -1,11 +1,32 @@
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:
-    app.kubernetes.io/name: 03-operator
-    app.kubernetes.io/managed-by: kustomize
   name: manager-role
 rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - apps.henkebyte.dev
+  resources:
+  - widgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps.henkebyte.dev
+  resources:
+  - widgets/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - apps.henkebyte.dev
+  resources:
+  - widgets/status
+  verbs:
+  - get
+  - patch
+  - update
