@@ -104,7 +104,7 @@ An operator is just: watch for custom resources → reconcile state.
   ```
 - Learned concepts: CRD, operator, controller, reconciler, manager, scheme, watch stream, work queue, RBAC, controller-runtime, Kustomize, leader election, control plane
 
-### Midday (3h): Scaffold and implement a basic operator
+### ~~Midday (3h): Scaffold and implement a basic operator~~ ✅ Done
 
 ```bash
 kubebuilder init --domain henkebyte.dev --repo github.com/tobiashenke/go_k8s/operator
@@ -114,8 +114,8 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 **Operator goal:** A `Widget` custom resource that creates a `ConfigMap` with the widget's spec fields as data. That's it — no complex business logic. The point is to understand the reconcile loop.
 
 1. ~~Edit the generated `spec` struct in `api/v1alpha1/widget_types.go`~~ ✅
-2. Implement `Reconcile()` in `internal/controller/widget_controller.go`: get the Widget, create/update a ConfigMap
-3. `make install` to install the CRD, `make run` to run the controller locally against your cluster
+2. ~~Implement `Reconcile()` in `internal/controller/widget_controller.go`: get the Widget, create/update a ConfigMap~~ ✅
+3. ~~`make install` to install the CRD, `make run` to run the controller locally against your cluster~~ ✅
 
 ### Afternoon (1-2h): Connect your Day 2 work
 - In the reconciler, also publish a NATS event when a Widget is created/updated

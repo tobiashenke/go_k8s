@@ -24,9 +24,9 @@ type WidgetStatus struct {
 // Widget is the Schema for the widgets API
 type Widget struct {
 	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitzero"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
 	Spec              WidgetSpec   `json:"spec"`
-	Status            WidgetStatus `json:"status,omitzero"`
+	Status            WidgetStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
