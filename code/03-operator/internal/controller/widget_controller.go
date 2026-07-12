@@ -26,11 +26,13 @@ type WidgetReconciler struct {
 // +kubebuilder:rbac:groups="",resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 
 func (r *WidgetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = logf.FromContext(ctx)
+	log := logf.FromContext(ctx)
+	log.Info("Reconciling Widget", "name", req.Name, "namespace", req.Namespace)
 
 	var widget appsv1alpha1.Widget
 	err := r.Get(ctx, req.NamespacedName, &widget)
 	if errors.IsNotFound(err) {
+		log.Info("Widget not found, likely deleted", "name", req.Name)
 		return ctrl.Result{}, nil
 	}
 	if err != nil {
@@ -62,12 +64,14 @@ func (r *WidgetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		return ctrl.Result{}, err
 	}
 
+	log.Info("ConfigMap reconciled", "name", configMap.Name, "message", widget.Spec.Message)
 	return ctrl.Result{}, nil
 }
 
 func (r *WidgetReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&appsv1alpha1.Widget{}).
+		Owns(&corev1.ConfigMap{}).
 		Named("widget").
 		Complete(r)
 }
