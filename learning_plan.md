@@ -93,26 +93,27 @@ Key mental model: **messaging decouples producers from consumers; caching decoup
 
 An operator is just: watch for custom resources → reconcile state.
 
-### Morning (2h): Controller concepts
-- Read the [operator pattern docs](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) — ~20 min
+### ~~Morning (2h): Controller concepts~~ ✅ Done
+- ~~Read the [operator pattern docs](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)~~ — covered in theory
 - Key mental model: a controller is a `for` loop that watches k8s API events and drives actual state toward desired state — the same reconcile loop Terraform does, but continuously running inside the cluster instead of on your laptop
-- Install tools:
+- ~~Install tools:~~
   ```bash
   brew install kubebuilder
-  brew install kind   # or k3d
+  brew install kind
   kind create cluster
   ```
+- Learned concepts: CRD, operator, controller, reconciler, manager, scheme, watch stream, work queue, RBAC, controller-runtime, Kustomize, leader election, control plane
 
 ### Midday (3h): Scaffold and implement a basic operator
 
 ```bash
-kubebuilder init --domain example.com --repo github.com/you/myoperator
+kubebuilder init --domain henkebyte.dev --repo github.com/tobiashenke/go_k8s/operator
 kubebuilder create api --group apps --version v1alpha1 --kind Widget
 ```
 
 **Operator goal:** A `Widget` custom resource that creates a `ConfigMap` with the widget's spec fields as data. That's it — no complex business logic. The point is to understand the reconcile loop.
 
-1. Edit the generated `spec` struct in `api/v1alpha1/widget_types.go`
+1. ~~Edit the generated `spec` struct in `api/v1alpha1/widget_types.go`~~ ✅
 2. Implement `Reconcile()` in `internal/controller/widget_controller.go`: get the Widget, create/update a ConfigMap
 3. `make install` to install the CRD, `make run` to run the controller locally against your cluster
 
