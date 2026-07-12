@@ -121,10 +121,10 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 - In the reconciler, also publish a NATS event when a Widget is created/updated
 - This ties everything together: Go + messaging + k8s operator
 
-### Optional (if ahead of schedule)
+### ~~Optional (if ahead of schedule)~~ ✅ Done
 - Add a `status` subresource to your Widget CRD and update it in the reconciler (`updateStatus`)
 - Handle deletion with a finalizer — prevents the resource being deleted before cleanup runs
-- Deploy the operator into your kind cluster as a real Pod: `make docker-build`, `make deploy`
+- ~~Deploy the operator into your kind cluster as a real Pod: `make docker-build`, `make deploy`~~ ✅
 
 ---
 
