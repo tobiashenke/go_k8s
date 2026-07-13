@@ -63,6 +63,11 @@ func (r *WidgetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if err != nil {
 		return ctrl.Result{}, err
 	}
+	widget.Status.LastMessage = widget.Spec.Message
+	err = r.Status().Update(ctx, &widget)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
 
 	log.Info("ConfigMap reconciled", "name", configMap.Name, "message", widget.Spec.Message)
 	return ctrl.Result{}, nil
