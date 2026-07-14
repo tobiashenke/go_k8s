@@ -132,12 +132,12 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 **Goal:** Turn your Day 1-2 API into something that looks like a real service.
 
-- Swap `net/http` for [chi](https://github.com/go-chi/chi) or [gin](https://github.com/gin-gonic/gin) — learn routing, middleware, request binding
+- ~~Swap `net/http` for [chi](https://github.com/go-chi/chi) — learn routing, middleware, request binding~~ ✅
 - Add proper validation with `github.com/go-playground/validator/v10`
 - Add structured logging (`log/slog`) and distributed tracing with OpenTelemetry (`go.opentelemetry.io/otel`)
 - Add Prometheus metrics: request count, latency histograms — use `github.com/prometheus/client_golang`
 - Write a `docker-compose.yml` that wires up your API, Redis, NATS, and a Postgres database together
-- Add a health check endpoint (`GET /healthz`) and a readiness endpoint (`GET /readyz`) — standard for k8s deployments
+- ~~Add a health check endpoint (`GET /healthz`) and a readiness endpoint (`GET /readyz`) — standard for k8s deployments~~ ✅
 - Deploy the full stack to your kind cluster using a Helm chart you write yourself
 
 ---

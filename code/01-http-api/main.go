@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/tobiashenke/go_k8s/internal/items"
 )
 
@@ -32,14 +33,23 @@ func main() {
 	itemHandler := items.NewItemHandler(service)
 
 	// Setup the server
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /items", itemHandler.HandleGetAll)
-	mux.HandleFunc("POST /items", itemHandler.HandleCreate)
-	mux.HandleFunc("GET /items/{id}", itemHandler.HandleGetByID)
-	mux.HandleFunc("DELETE /items/{id}", itemHandler.HandleDelete)
+	r := chi.NewRouter()
+	// Register middleware
+	r.Use(items.LoggingMiddleware)
+	// Register routes
+	r.Get("/items", itemHandler.HandleGetAll)
+	r.Post("/items", itemHandler.HandleCreate)
+	r.Get("/items/{id}", itemHandler.HandleGetByID)
+	r.Delete("/items/{id}", itemHandler.HandleDelete)
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
 
 	// Start the server
-	err = http.ListenAndServe(":8087", items.LoggingMiddleware((mux)))
+	err = http.ListenAndServe(":8087", r)
 	if err != nil {
 		slog.Error("failed to start server", "error", err)
 		os.Exit(1)

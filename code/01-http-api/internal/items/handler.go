@@ -3,6 +3,8 @@ package items
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type ItemHandler struct {
@@ -42,7 +44,7 @@ func (h *ItemHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ItemHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	id := chi.URLParam(r, "id")
 	item, err := h.service.Get(id)
 	if err != nil {
 		writeError(w, http.StatusNotFound, "item not found")
@@ -54,7 +56,7 @@ func (h *ItemHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ItemHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	id := chi.URLParam(r, "id")
 	err := h.service.Delete((id))
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "item not deleted")
