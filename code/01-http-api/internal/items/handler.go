@@ -5,14 +5,19 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 )
 
 type ItemHandler struct {
-	service *ItemService
+	service   *ItemService
+	validator *validator.Validate
 }
 
 func NewItemHandler(i *ItemService) *ItemHandler {
-	return &ItemHandler{service: i}
+	return &ItemHandler{
+		service:   i,
+		validator: validator.New(),
+	}
 }
 
 func (h *ItemHandler) HandleGetAll(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +36,11 @@ func (h *ItemHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&item)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+	err = h.validator.Struct(item)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "validation failed: "+err.Error())
 		return
 	}
 	err = h.service.Save(item)
