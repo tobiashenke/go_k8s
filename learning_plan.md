@@ -39,7 +39,7 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T15 | Backpressure | When a consumer is slower than a producer, the queue grows unboundedly — systems need to either slow the producer, drop messages, or scale the consumer | Day 3 | [x] |
 | T16 | CAP theorem | A distributed system can guarantee at most two of: Consistency, Availability, Partition tolerance — partitions always happen, so every system trades off C vs A | Day 3 | [x] |
 | T17 | ACID vs BASE | ACID (relational DBs): Atomic, Consistent, Isolated, Durable. BASE (distributed systems): Basically Available, Soft state, Eventually consistent — explains why caches and queues behave differently than a DB | Day 3 | [x] |
-| T18 | Observability pillars | Logs: what happened (structured, queryable). Metrics: how much / how fast (counters, gauges, histograms). Traces: where time was spent across service boundaries. Different tools for different questions | Day 4 | [ ] |
+| T18 | Observability pillars | Logs: what happened (structured, queryable). Metrics: how much / how fast (counters, gauges, histograms). Traces: where time was spent across service boundaries. Different tools for different questions | Day 4 | [x] |
 | T19 | Circuit breaker | When a dependency fails repeatedly, stop calling it for a cooldown period (open state) — fail fast instead of piling up slow failures that exhaust threads/goroutines | Day 5 | [ ] |
 | T20 | Retry with exponential backoff + jitter | On failure, wait 2^n seconds before retrying — jitter (random offset) prevents all retriers hitting the service simultaneously (thundering herd) | Day 5 | [ ] |
 
