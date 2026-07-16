@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/tobiashenke/go_k8s/internal/items"
 )
 
@@ -36,6 +37,7 @@ func main() {
 	r := chi.NewRouter()
 	// Register middleware
 	r.Use(items.LoggingMiddleware)
+	r.Use(items.MetricsMiddleware)
 	// Register routes
 	r.Get("/items", itemHandler.HandleGetAll)
 	r.Post("/items", itemHandler.HandleCreate)
@@ -47,6 +49,7 @@ func main() {
 	r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
+	r.Get("/metrics", http.HandlerFunc(promhttp.Handler().ServeHTTP))
 
 	// Start the server
 	err = http.ListenAndServe(":8087", r)
