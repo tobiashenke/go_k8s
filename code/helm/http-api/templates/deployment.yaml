@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}
-        image: {{ .Values.image.repository}}:{{ .Values.image.tag }}
+        image: {{ .Values.images.api.repository}}:{{ .Values.images.api.tag }}
         imagePullPolicy: Never
         ports:
         - containerPort: {{ .Values.service.port }}
@@ -31,3 +31,47 @@ spec:
             configMapKeyRef:
               name: {{ .Release.Name }}-config
               key: natsURL
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: {{ .Values.images.redis.repository }}:{{ .Values.images.redis.tag }}
+        ports:
+        - containerPort: {{ .Values.redis.port }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats-deployment
+  labels:
+    app: nats
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+      - name: nats
+        image: {{ .Values.images.nats.repository }}:{{ .Values.images.nats.tag }}
+        ports:
+        - containerPort: {{ .Values.nats.port }}
