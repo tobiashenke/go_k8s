@@ -10,10 +10,16 @@ import (
 	"github.com/tobiashenke/go_k8s/internal/items"
 )
 
-const redisAddr = "localhost:6379"
-const natsUrl = "nats://localhost:4222"
+var redisAddr = os.Getenv("REDIS_ADDR")
+var natsUrl = os.Getenv("NATS_URL")
 
 func main() {
+	if redisAddr == "" {
+		redisAddr = "localhost:6379"
+	}
+	if natsUrl == "" {
+		natsUrl = "nats://localhost:4222"
+	}
 	// Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)

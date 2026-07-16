@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  redisAddr: {{ .Values.config.redisAddr }}
+  natsURL: {{ .Values.config.natsURL }}

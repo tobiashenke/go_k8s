@@ -138,7 +138,7 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 - ~~Add Prometheus metrics: request count, latency histograms — use `github.com/prometheus/client_golang`~~ ✅
 - ~~Write a `docker-compose.yml` that wires up your API, Redis and NATS together~~ ✅
 - ~~Add a health check endpoint (`GET /healthz`) and a readiness endpoint (`GET /readyz`) — standard for k8s deployments~~ ✅
-- Deploy the full stack to your kind cluster using a Helm chart you write yourself
+- ~~Deploy the full stack to your kind cluster using a Helm chart you write yourself~~ ✅
 
 ---
 

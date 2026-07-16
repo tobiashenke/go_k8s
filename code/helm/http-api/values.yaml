@@ -1,0 +1,9 @@
+image:
+  repository: http-api
+  tag: 0.0.1
+replicaCount: 1
+service:
+  port: 8087
+config:
+  redisAddr: localhost:6379
+  natsURL: nats://localhost:4222
