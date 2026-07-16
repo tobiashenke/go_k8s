@@ -134,7 +134,7 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 - ~~Swap `net/http` for [chi](https://github.com/go-chi/chi) — learn routing, middleware, request binding~~ ✅
 - ~~Add proper validation with `github.com/go-playground/validator/v10`~~ ✅
-- Add structured logging (`log/slog`) and distributed tracing with OpenTelemetry (`go.opentelemetry.io/otel`)
+- ~~Add structured logging (`log/slog`) — completed in Day 2~~ ✅
 - ~~Add Prometheus metrics: request count, latency histograms — use `github.com/prometheus/client_golang`~~ ✅
 - ~~Write a `docker-compose.yml` that wires up your API, Redis and NATS together~~ ✅
 - ~~Add a health check endpoint (`GET /healthz`) and a readiness endpoint (`GET /readyz`) — standard for k8s deployments~~ ✅
