@@ -9,16 +9,6 @@ import (
 	promauto "github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-type responseWriter struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-func (rw *responseWriter) WriteHeader(statusCode int) {
-	rw.statusCode = statusCode
-	rw.ResponseWriter.WriteHeader(statusCode)
-}
-
 var requestCount = promauto.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "http_requests_total",

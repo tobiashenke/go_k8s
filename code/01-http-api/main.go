@@ -44,11 +44,17 @@ func main() {
 	// Register middleware
 	r.Use(items.LoggingMiddleware)
 	r.Use(items.MetricsMiddleware)
+	// Register route with middleware
+	r.Route("/items", func(r chi.Router) {
+		r.Use(items.IdempotencyMiddleware(c))
+		r.Post("/", itemHandler.HandleCreate)
+	})
 	// Register routes
 	r.Get("/items", itemHandler.HandleGetAll)
-	r.Post("/items", itemHandler.HandleCreate)
 	r.Get("/items/{id}", itemHandler.HandleGetByID)
 	r.Delete("/items/{id}", itemHandler.HandleDelete)
+	// Not required anymore due to middleware POST route
+	// r.Post("/items", itemHandler.HandleCreate)
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})

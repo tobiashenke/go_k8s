@@ -147,7 +147,7 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 **Goal:** Understand the hard problems — consistency, failure modes, observability. (~5-6h)
 
-- **Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis (~30-45 min)
+- ~~**Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis~~ ✅ (~30-45 min)
 - **Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API (~45-60 min)
 - **Circuit breaker:** Implement a basic circuit breaker around your cache calls using `github.com/sony/gobreaker` (~30-45 min)
 - **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`) (~60-90 min)

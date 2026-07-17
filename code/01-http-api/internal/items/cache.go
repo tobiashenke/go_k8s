@@ -50,3 +50,15 @@ func (c *ItemCache) Delete(ctx context.Context, id string) error {
 	}
 	return nil
 }
+
+func (c *ItemCache) SetResponse(ctx context.Context, key string, data []byte, ttl time.Duration) error {
+	r := c.client.Set(ctx, key, data, ttl)
+	if r.Err() != nil {
+		return r.Err()
+	}
+	return nil
+}
+
+func (c *ItemCache) GetResponse(ctx context.Context, key string) ([]byte, error) {
+	return c.client.Get(ctx, key).Bytes()
+}
