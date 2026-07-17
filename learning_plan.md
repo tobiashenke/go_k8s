@@ -66,6 +66,7 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 ### ~~Optional (if ahead of schedule)~~ ✅ Done
 - ~~Add middleware: a simple request logger that wraps your handlers~~ ✅
 - ~~Try goroutines: process items concurrently using `sync.WaitGroup`~~ ✅
+- ~~Read [Effective Go](https://go.dev/doc/effective_go) sections on concurrency — channels, goroutines, CSP model~~ ✅
 
 ---
 
@@ -144,17 +145,24 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 ## Day 5 (Optional) — Distributed Systems Depth
 
-**Goal:** Understand the hard problems — consistency, failure modes, observability.
+**Goal:** Understand the hard problems — consistency, failure modes, observability. (~5-6h)
 
-- **Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis
-- **Circuit breaker:** Implement a basic circuit breaker around your cache calls using `github.com/sony/gobreaker`
-- **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`)
-- **Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API
-- **Kafka deep dive:** Replace NATS JetStream with Kafka, implement consumer groups, understand partition assignment and offset management
-- **Postgres:** Add a Postgres service to docker-compose, swap SQLite repository for a `PostgresItemRepository` using `database/sql` — same interface, different driver (`github.com/lib/pq`), learn about connection strings and connection pooling
-- **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.)
+- **Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis (~30-45 min)
+- **Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API (~45-60 min)
+- **Circuit breaker:** Implement a basic circuit breaker around your cache calls using `github.com/sony/gobreaker` (~30-45 min)
+- **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`) (~60-90 min)
+- **Postgres:** Add a Postgres service to docker-compose, swap SQLite repository for a `PostgresItemRepository` using `database/sql` — same interface, different driver (`github.com/lib/pq`), learn about connection strings and connection pooling (~45-60 min)
+- **Kafka deep dive:** Replace NATS with Kafka, implement consumer groups, understand partition assignment and offset management (~60-90 min)
+- **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.) (~30-45 min)
+
+---
+
+## Day 6 (Optional) — Security & Advanced Patterns
+
+**Goal:** Secure your API and explore advanced Go patterns. (~5-6h)
+
+- **Authentication:** Add JWT-based authentication middleware to your API — validate tokens on protected endpoints (~60-90 min)
 - **Read:** [Designing Distributed Systems](https://www.oreilly.com/library/view/designing-distributed-systems/9781491983638/) ch. 1-4 (free online) — patterns like sidecar, ambassador, adapter map directly to k8s
-- **Read:** [Effective Go](https://go.dev/doc/effective_go) sections on concurrency — channels, goroutines, CSP model
 
 ---
 
