@@ -81,16 +81,18 @@ func (c *ItemCache) ExceededRateLimit(ctx context.Context, ip string, limit int,
 	if count.Err() != nil {
 		return false, nil
 	}
-	z = c.client.ZAdd(ctx, ip, redis.Z{
-		Score:  float64(time.Now().UnixNano()),
-		Member: time.Now().UnixNano(),
-	})
-	if z.Err() != nil {
-		return false, nil
-	}
-	b := c.client.Expire(ctx, ip, window)
-	if b.Err() != nil {
-		return false, nil
+	if count.Val() < int64(limit) {
+		z = c.client.ZAdd(ctx, ip, redis.Z{
+			Score:  float64(time.Now().UnixNano()),
+			Member: time.Now().UnixNano(),
+		})
+		if z.Err() != nil {
+			return false, nil
+		}
+		b := c.client.Expire(ctx, ip, window)
+		if b.Err() != nil {
+			return false, nil
+		}
 	}
 	return count.Val() > int64(limit), nil
 }
