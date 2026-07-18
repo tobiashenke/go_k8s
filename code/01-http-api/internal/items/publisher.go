@@ -1,6 +1,7 @@
 package items
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/nats-io/nats.go"
@@ -26,7 +27,7 @@ func (p *ItemPublisher) publish(data []byte, action string) error {
 	return err
 }
 
-func (p *ItemPublisher) PublishCreate(item Item) error {
+func (p *ItemPublisher) PublishCreate(ctx context.Context, item Item) error {
 	data, err := json.Marshal(item)
 	if err != nil {
 		return err
@@ -38,7 +39,7 @@ func (p *ItemPublisher) PublishCreate(item Item) error {
 	return nil
 }
 
-func (p *ItemPublisher) PublishDelete(id string) error {
+func (p *ItemPublisher) PublishDelete(ctx context.Context, id string) error {
 	data, err := json.Marshal(id)
 	if err != nil {
 		return err

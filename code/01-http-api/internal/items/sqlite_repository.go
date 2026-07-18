@@ -1,8 +1,11 @@
 package items
 
 import (
+	"context"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/plugin/opentelemetry/tracing"
 )
 
 type SQLiteItemRepository struct {
@@ -18,10 +21,14 @@ func NewSQLiteItemRepository() (*SQLiteItemRepository, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = db.Use(tracing.NewPlugin())
+	if err != nil {
+		return nil, err
+	}
 	return &SQLiteItemRepository{db: db}, nil
 }
 
-func (r *SQLiteItemRepository) Save(item Item) error {
+func (r *SQLiteItemRepository) Save(ctx context.Context, item Item) error {
 	g := r.db.Save(&item)
 	if g.Error != nil {
 		return g.Error
@@ -29,7 +36,7 @@ func (r *SQLiteItemRepository) Save(item Item) error {
 	return nil
 }
 
-func (r *SQLiteItemRepository) Get(id string) (*Item, error) {
+func (r *SQLiteItemRepository) Get(ctx context.Context, id string) (*Item, error) {
 	var item Item
 	g := r.db.First(&item, id)
 	if g.Error != nil {
@@ -38,7 +45,7 @@ func (r *SQLiteItemRepository) Get(id string) (*Item, error) {
 	return &item, nil
 }
 
-func (r *SQLiteItemRepository) GetAll() ([]Item, error) {
+func (r *SQLiteItemRepository) GetAll(ctx context.Context) ([]Item, error) {
 	var itemList []Item
 	g := r.db.Find(&itemList)
 	if g.Error != nil {
@@ -47,7 +54,7 @@ func (r *SQLiteItemRepository) GetAll() ([]Item, error) {
 	return itemList, nil
 }
 
-func (r *SQLiteItemRepository) Delete(id string) error {
+func (r *SQLiteItemRepository) Delete(ctx context.Context, id string) error {
 	g := r.db.Delete(&Item{}, id)
 	return g.Error
 }

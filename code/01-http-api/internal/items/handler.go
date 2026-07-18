@@ -21,7 +21,7 @@ func NewItemHandler(i *ItemService) *ItemHandler {
 }
 
 func (h *ItemHandler) HandleGetAll(w http.ResponseWriter, r *http.Request) {
-	items, err := h.service.GetAll()
+	items, err := h.service.GetAll(r.Context())
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to retrieve items")
 		return
@@ -43,7 +43,7 @@ func (h *ItemHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "validation failed: "+err.Error())
 		return
 	}
-	err = h.service.Save(item)
+	err = h.service.Save(r.Context(), item)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to save item")
 		return
@@ -55,7 +55,7 @@ func (h *ItemHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 
 func (h *ItemHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	item, err := h.service.Get(id)
+	item, err := h.service.Get(r.Context(), id)
 	if err != nil {
 		writeError(w, http.StatusNotFound, "item not found")
 		return
@@ -67,7 +67,7 @@ func (h *ItemHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 
 func (h *ItemHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	err := h.service.Delete((id))
+	err := h.service.Delete(r.Context(), id)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "item not deleted")
 		return

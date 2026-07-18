@@ -151,7 +151,7 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 - ~~**Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis~~ ✅ (~2h)
 - ~~**Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API~~ ✅ (~2-3h)
-- **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`) (~3-4h)
+- ~~**Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger~~ ✅ (~3-4h)
 
 ---
 

@@ -41,7 +41,11 @@ func main() {
 		slog.Error("failed to open SQLite database", "error", err)
 		os.Exit(1)
 	}
-	c := items.NewItemCache(redisAddr)
+	c, err := items.NewItemCache(redisAddr)
+	if err != nil {
+		slog.Error("failed to start the redis cache", "error", err)
+		os.Exit(1)
+	}
 	p, err := items.NewItemPublisher(natsUrl)
 	if err != nil {
 		slog.Error("failed to start the NATS publisher", "error", err)

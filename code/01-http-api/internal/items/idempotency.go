@@ -1,7 +1,6 @@
 package items
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -22,7 +21,7 @@ func IdempotencyMiddleware(c *ItemCache) func(http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 				return
 			}
-			response, err := c.GetResponse(context.Background(), key)
+			response, err := c.GetResponse(r.Context(), key)
 			// if key present return early
 			if err == nil {
 				json.Unmarshal(response, &data)
@@ -42,7 +41,7 @@ func IdempotencyMiddleware(c *ItemCache) func(http.Handler) http.Handler {
 				Body:   rw.body.String(),
 			}
 			body, _ := json.Marshal(data)
-			c.SetResponse(context.Background(), key, body, 24*time.Hour)
+			c.SetResponse(r.Context(), key, body, 24*time.Hour)
 		})
 	}
 }

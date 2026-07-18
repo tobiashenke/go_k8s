@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -13,10 +14,15 @@ type ItemCache struct {
 	client *redis.Client
 }
 
-func NewItemCache(RedisAddress string) *ItemCache {
-	return &ItemCache{
+func NewItemCache(RedisAddress string) (*ItemCache, error) {
+	client := &ItemCache{
 		client: redis.NewClient(&redis.Options{Addr: RedisAddress}),
 	}
+	err := redisotel.InstrumentTracing(client.client)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
 
 func (c *ItemCache) Set(ctx context.Context, item Item) error {
