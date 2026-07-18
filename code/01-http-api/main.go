@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -44,6 +45,7 @@ func main() {
 	// Register middleware
 	r.Use(items.LoggingMiddleware)
 	r.Use(items.MetricsMiddleware)
+	r.Use(items.RateLimitMiddleware(c, 100, 60*time.Second))
 	// Register route with middleware
 	r.Route("/items", func(r chi.Router) {
 		r.Use(items.IdempotencyMiddleware(c))

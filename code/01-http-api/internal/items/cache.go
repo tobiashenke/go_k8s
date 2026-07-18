@@ -3,6 +3,7 @@ package items
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -61,4 +62,29 @@ func (c *ItemCache) SetResponse(ctx context.Context, key string, data []byte, tt
 
 func (c *ItemCache) GetResponse(ctx context.Context, key string) ([]byte, error) {
 	return c.client.Get(ctx, key).Bytes()
+}
+
+func (c *ItemCache) ExceededRateLimit(ctx context.Context, ip string, limit int, window time.Duration) (bool, error) {
+	windowStart := time.Now().Add(-window).UnixNano()
+	z := c.client.ZRemRangeByScore(ctx, ip, "0", fmt.Sprintf("%d", windowStart))
+	if z.Err() != nil {
+		return false, nil
+	}
+	count := c.client.ZCard(ctx, ip)
+	// fail open: don't block on Redis error -> allow request to go through
+	if count.Err() != nil {
+		return false, nil
+	}
+	z = c.client.ZAdd(ctx, ip, redis.Z{
+		Score:  float64(time.Now().UnixNano()),
+		Member: time.Now().UnixNano(),
+	})
+	if z.Err() != nil {
+		return false, nil
+	}
+	b := c.client.Expire(ctx, ip, window)
+	if b.Err() != nil {
+		return false, nil
+	}
+	return count.Val() > int64(limit), nil
 }

@@ -41,7 +41,8 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T17 | ACID vs BASE | ACID (relational DBs): Atomic, Consistent, Isolated, Durable. BASE (distributed systems): Basically Available, Soft state, Eventually consistent — explains why caches and queues behave differently than a DB | Day 3 | [x] |
 | T18 | Observability pillars | Logs: what happened (structured, queryable). Metrics: how much / how fast (counters, gauges, histograms). Traces: where time was spent across service boundaries. Different tools for different questions | Day 4 | [x] |
 | T19 | Circuit breaker | When a dependency fails repeatedly, stop calling it for a cooldown period (open state) — fail fast instead of piling up slow failures that exhaust threads/goroutines | Day 5 | [ ] |
-| T20 | Retry with exponential backoff + jitter | On failure, wait 2^n seconds before retrying — jitter (random offset) prevents all retriers hitting the service simultaneously (thundering herd) | Day 5 | [ ] |
+| T20 | Retry with exponential backoff + jitter | On failure, wait 2^n seconds before retrying — jitter (random offset) prevents all retriers hitting the service simultaneously (thundering herd) | Day 5 | [x] |
+| T21 | Fail open vs fail closed | Fail open: allow requests through when a dependency is unavailable (availability over safety). Fail closed: reject requests when a dependency is down (safety over availability). Rate limiting and auth caching fail open; payments and auth validation fail closed | Day 6 | [ ] |
 
 ---
 
@@ -145,24 +146,32 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 ## Day 5 (Optional) — Distributed Systems Depth
 
-**Goal:** Understand the hard problems — consistency, failure modes, observability. (~5-6h)
+**Goal:** Idempotency, rate limiting, circuit breaker, distributed tracing. (~8-10.5h realistic)
 
-- ~~**Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis~~ ✅ (~30-45 min)
-- **Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API (~45-60 min)
-- **Circuit breaker:** Implement a basic circuit breaker around your cache calls using `github.com/sony/gobreaker` (~30-45 min)
-- **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`) (~60-90 min)
-- **Postgres:** Add a Postgres service to docker-compose, swap SQLite repository for a `PostgresItemRepository` using `database/sql` — same interface, different driver (`github.com/lib/pq`), learn about connection strings and connection pooling (~45-60 min)
-- **Kafka deep dive:** Replace NATS with Kafka, implement consumer groups, understand partition assignment and offset management (~60-90 min)
-- **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.) (~30-45 min)
+- ~~**Idempotency:** Make your `POST /items` idempotent using a client-supplied `Idempotency-Key` header cached in Redis~~ ✅ (~2h)
+- ~~**Rate limiting:** Add a Redis-backed sliding-window rate limiter to your API~~ ✅ (~2-3h)
+- **Circuit breaker:** Implement a basic circuit breaker around your cache calls using `github.com/sony/gobreaker` (~1-1.5h)
+- **Distributed tracing:** Instrument your operator and API with OpenTelemetry traces — see a request flow across services in Jaeger (`docker run -p 16686:16686 jaegertracing/all-in-one`) (~3-4h)
 
 ---
 
-## Day 6 (Optional) — Security & Advanced Patterns
+## Day 6 (Optional) — Data & Messaging
 
-**Goal:** Secure your API and explore advanced Go patterns. (~5-6h)
+**Goal:** Postgres, atomic rate limiting, Kafka, operator patterns. (~5.5-6.5h realistic)
 
-- **Authentication:** Add JWT-based authentication middleware to your API — validate tokens on protected endpoints (~60-90 min)
-- **Read:** [Designing Distributed Systems](https://www.oreilly.com/library/view/designing-distributed-systems/9781491983638/) ch. 1-4 (free online) — patterns like sidecar, ambassador, adapter map directly to k8s
+- **Postgres:** Add a Postgres service to docker-compose, swap SQLite repository for a `PostgresItemRepository` using `database/sql` — same interface, different driver (`github.com/lib/pq`), learn about connection strings and connection pooling (~1.5h)
+- **Rate limiter race condition fix:** Implement atomic sliding window rate limiting using a Redis Lua script to eliminate the race condition in `ExceededRateLimit` (~1h)
+- **Kafka deep dive:** Replace NATS with Kafka, implement consumer groups, understand partition assignment and offset management (~2-3h)
+- **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.) (~1h)
+
+---
+
+## Day 7 (Optional) — Security & Reading
+
+**Goal:** Secure your API and deepen distributed systems theory. (~4-6h realistic)
+
+- **Authentication:** Add JWT-based authentication middleware to your API — validate tokens on protected endpoints (~2-3h)
+- **Read:** [Designing Distributed Systems](https://www.oreilly.com/library/view/designing-distributed-systems/9781491983638/) ch. 1-4 (free online) — patterns like sidecar, ambassador, adapter map directly to k8s (~1-2h)
 
 ---
 
