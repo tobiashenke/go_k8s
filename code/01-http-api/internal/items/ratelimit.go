@@ -18,7 +18,7 @@ func RateLimitMiddleware(c *ItemCache, limit int, window time.Duration) func(htt
 				next.ServeHTTP(w, r)
 				return
 			}
-			exceeded, err := c.ExceededRateLimit(r.Context(), ip, limit, window)
+			exceeded, err := c.ExceededRateLimitWithLua(r.Context(), ip, limit, window)
 			if !exceeded || err != nil {
 				next.ServeHTTP(w, r)
 				return

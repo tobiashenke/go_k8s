@@ -94,5 +94,24 @@ func (c *ItemCache) ExceededRateLimit(ctx context.Context, ip string, limit int,
 			return false, nil
 		}
 	}
-	return count.Val() > int64(limit), nil
+	return count.Val() >= int64(limit), nil
+}
+
+var LuaRateLimitScript = `
+redis.call('ZREMRANGEBYSCORE', KEYS[1], 0, ARGV[2])
+local count = redis.call('ZCARD', KEYS[1])
+if count < tonumber(ARGV[1]) then
+	redis.call('ZADD', KEYS[1], ARGV[3], ARGV[3])
+	redis.call('EXPIRE', KEYS[1], tonumber(ARGV[4]))
+	return 0
+else
+	return 1
+end
+`
+
+func (c *ItemCache) ExceededRateLimitWithLua(ctx context.Context, ip string, limit int, window time.Duration) (bool, error) {
+	windowStart := time.Now().Add(-window).UnixNano()
+	now := time.Now().UnixNano()
+	cmd := c.client.Eval(ctx, LuaRateLimitScript, []string{ip}, limit, windowStart, now, int(window.Seconds()))
+	return cmd.Bool()
 }
