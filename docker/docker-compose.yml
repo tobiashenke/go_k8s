@@ -10,3 +10,10 @@ services:
     ports:
       - "4222:4222"
     restart: unless-stopped
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+    restart: unless-stopped

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/tobiashenke/go_k8s/internal/items"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 var redisAddr = os.Getenv("REDIS_ADDR")
@@ -24,6 +26,14 @@ func main() {
 	// Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
+
+	// OTEL tracer
+	shutdownTracer, err := items.InitTracer(context.Background(), "http-api")
+	if err != nil {
+		slog.Error("failed to initialize the tracer", "error", err)
+		os.Exit(1)
+	}
+	defer shutdownTracer()
 
 	// Business logic
 	repo, err := items.NewSQLiteItemRepository()
@@ -65,8 +75,8 @@ func main() {
 	})
 	r.Get("/metrics", http.HandlerFunc(promhttp.Handler().ServeHTTP))
 
-	// Start the server
-	err = http.ListenAndServe(":8087", r)
+	// Start the server, wrapped chi router into OTEL trace
+	err = http.ListenAndServe(":8087", otelhttp.NewHandler(r, "http-api"))
 	if err != nil {
 		slog.Error("failed to start server", "error", err)
 		os.Exit(1)
