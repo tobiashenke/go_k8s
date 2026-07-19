@@ -27,6 +27,8 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
+	// Auth Handler
+
 	// OTEL tracer
 	shutdownTracer, err := items.InitTracer(context.Background(), "http-api")
 	if err != nil {
@@ -53,6 +55,7 @@ func main() {
 	}
 	service := items.NewItemService(repo, c, p)
 	itemHandler := items.NewItemHandler(service)
+	a := items.AuthHandler{}
 
 	// Setup the server
 	r := chi.NewRouter()
@@ -62,13 +65,18 @@ func main() {
 	r.Use(items.RateLimitMiddleware(c, 100, 60*time.Second))
 	// Register route with middleware
 	r.Route("/items", func(r chi.Router) {
+		r.Use(items.AuthMiddleWare)
 		r.Use(items.IdempotencyMiddleware(c))
 		r.Post("/", itemHandler.HandleCreate)
 	})
 	// Register routes
-	r.Get("/items", itemHandler.HandleGetAll)
-	r.Get("/items/{id}", itemHandler.HandleGetByID)
-	r.Delete("/items/{id}", itemHandler.HandleDelete)
+	r.Post("/login", a.HandleLogin)
+	r.Group(func(r chi.Router) {
+		r.Use(items.AuthMiddleWare)
+		r.Get("/items", itemHandler.HandleGetAll)
+		r.Get("/items/{id}", itemHandler.HandleGetByID)
+		r.Delete("/items/{id}", itemHandler.HandleDelete)
+	})
 	// Not required anymore due to middleware POST route
 	// r.Post("/items", itemHandler.HandleCreate)
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {

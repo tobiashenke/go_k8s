@@ -44,6 +44,7 @@ Read each topic before the day it's marked as required. Each entry is intentiona
 | T20 | Retry with exponential backoff + jitter | On failure, wait 2^n seconds before retrying — jitter (random offset) prevents all retriers hitting the service simultaneously (thundering herd) | Day 5 | [x] |
 | T21 | Fail open vs fail closed | Fail open: allow requests through when a dependency is unavailable (availability over safety). Fail closed: reject requests when a dependency is down (safety over availability). Rate limiting and auth caching fail open; payments and auth validation fail closed | Day 6 | [ ] |
 | T22 | Reverse proxy & Ingress | A reverse proxy sits in front of services, routing external traffic by hostname/path, handling TLS termination, load balancing. In k8s, an Ingress resource configures this — backed by nginx, Traefik, or cloud LBs | Day 7 | [ ] |
+| T23 | NetworkPolicy | k8s resource that restricts Pod-to-Pod traffic using label selectors — default is allow-all, NetworkPolicy makes it deny-by-default for selected Pods | Day 7 | [ ] |
 
 ---
 
@@ -169,10 +170,11 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 ## Day 7 (Optional) — Operators, Proxy & Reading
 
-**Goal:** Operator conditions, proxy, reading. (~3.75-4.75h)
+**Goal:** Operator conditions, proxy, network policy, reading. (~5-6h)
 
 - **Operator status conditions:** Implement proper `metav1.Condition` status conditions on your Widget — this is the standard pattern used by all production operators (cert-manager, crossplane, etc.) (~45min)
 - **Reverse proxy:** Deploy an nginx or Traefik reverse proxy in front of your API in the kind cluster — learn about Ingress resources, path routing, TLS termination (~2h)
+- **NetworkPolicy:** Restrict Pod-to-Pod traffic in the cluster — only your API Pod can reach Redis, NATS, Jaeger. Learn how to protect internal services (~1h)
 - **Read:** [Designing Distributed Systems](https://www.oreilly.com/library/view/designing-distributed-systems/9781491983638/) ch. 1-4 (free online) — patterns like sidecar, ambassador, adapter map directly to k8s (~1h)
 
 ---
