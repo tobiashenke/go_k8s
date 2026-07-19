@@ -161,7 +161,7 @@ kubebuilder create api --group apps --version v1alpha1 --kind Widget
 
 **Goal:** Authentication, circuit breaker, Postgres, Kafka. (~4.5-5h)
 
-- **Authentication:** Add JWT-based authentication middleware to your API — validate tokens on protected endpoints (~1.5h)
+- ~~**Authentication:** Add JWT-based authentication middleware to your API — validate tokens on protected endpoints~~ ✅ (~1.5h)
 - **Circuit breaker:** Implement a basic circuit breaker around your cache calls using `github.com/sony/gobreaker` (~45min)
 - **Postgres:** Add a Postgres service to docker-compose, swap SQLite repository for a `PostgresItemRepository` using `database/sql` — same interface, different driver (`github.com/lib/pq`), learn about connection strings and connection pooling (~1h)
 - **Kafka deep dive:** Replace NATS with Kafka, implement consumer groups, understand partition assignment and offset management (~1.5h)
