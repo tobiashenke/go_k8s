@@ -8,15 +8,26 @@ import (
 
 	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/v9"
+	"github.com/sony/gobreaker/v2"
 )
 
 type ItemCache struct {
 	client *redis.Client
+	cb     *gobreaker.CircuitBreaker[any]
 }
 
 func NewItemCache(RedisAddress string) (*ItemCache, error) {
 	client := &ItemCache{
 		client: redis.NewClient(&redis.Options{Addr: RedisAddress}),
+		cb: gobreaker.NewCircuitBreaker[any](gobreaker.Settings{
+			Name:        "redis",
+			MaxRequests: 1,
+			Interval:    60 * time.Second,
+			Timeout:     30 * time.Second,
+			ReadyToTrip: func(counts gobreaker.Counts) bool {
+				return counts.ConsecutiveFailures > 5
+			},
+		}),
 	}
 	err := redisotel.InstrumentTracing(client.client)
 	if err != nil {
@@ -30,20 +41,24 @@ func (c *ItemCache) Set(ctx context.Context, item Item) error {
 	if err != nil {
 		return err
 	}
-	r := c.client.Set(ctx, item.ID, bytes, time.Minute*5)
-	if r.Err() != nil {
-		return r.Err()
+	_, err = c.cb.Execute(func() (any, error) {
+		return nil, c.client.Set(ctx, item.ID, bytes, time.Minute*5).Err()
+	})
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
 func (c *ItemCache) Get(ctx context.Context, id string) (*Item, error) {
-	bytes, err := c.client.Get(ctx, id).Bytes()
+	result, err := c.cb.Execute(func() (any, error) {
+		return c.client.Get(ctx, id).Bytes()
+	})
 	if err != nil {
 		return nil, err
 	}
 	var item Item
-	err = json.Unmarshal(bytes, &item)
+	err = json.Unmarshal(result.([]byte), &item)
 	if err != nil {
 		return nil, err
 	}
@@ -51,9 +66,11 @@ func (c *ItemCache) Get(ctx context.Context, id string) (*Item, error) {
 }
 
 func (c *ItemCache) Delete(ctx context.Context, id string) error {
-	r := c.client.Del(ctx, id)
-	if r.Err() != nil {
-		return r.Err()
+	_, err := c.cb.Execute(func() (any, error) {
+		return nil, c.client.Del(ctx, id).Err()
+	})
+	if err != nil {
+		return err
 	}
 	return nil
 }
