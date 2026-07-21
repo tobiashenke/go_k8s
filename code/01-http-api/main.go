@@ -15,6 +15,7 @@ import (
 
 var redisAddr = os.Getenv("REDIS_ADDR")
 var natsUrl = os.Getenv("NATS_URL")
+var postgresDSN = os.Getenv("POSTGRES_DSN")
 
 func main() {
 	if redisAddr == "" {
@@ -22,6 +23,9 @@ func main() {
 	}
 	if natsUrl == "" {
 		natsUrl = "nats://localhost:4222"
+	}
+	if postgresDSN == "" {
+		postgresDSN = "host=localhost user=admin password=secret dbname=items port=5432 sslmode=disable"
 	}
 	// Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
@@ -38,9 +42,9 @@ func main() {
 	defer shutdownTracer()
 
 	// Business logic
-	repo, err := items.NewSQLiteItemRepository()
+	repo, err := items.NewPostgresItemRepository(postgresDSN)
 	if err != nil {
-		slog.Error("failed to open SQLite database", "error", err)
+		slog.Error("failed to connect to Postgres database", "error", err)
 		os.Exit(1)
 	}
 	c, err := items.NewItemCache(redisAddr)
